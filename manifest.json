@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+  "name": "Hygiene Checker",
+  "version": "0.1",
+
+  "description": "Display food hygiene ratings inline on your favourite takeout sites (UK)",
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.just-eat.co.uk/restaurants-*/menu"],
+      "js": ["justeat.js"]
+    }
+  ]
+
+}
