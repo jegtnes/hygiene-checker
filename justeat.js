@@ -18,30 +18,37 @@ if (window.fetch) {
     console.log(response);
     return response.json();
   }).then((responseObject) => {
-    if (responseObject.SchemeType === 'FHRS') {
-      const ratingValue = parseInt(responseObject.RatingValue, 10);
-      console.log(ratingValue);
-      // England, Wales, NI
 
-      let justEatRestaurantOverview = document.getElementsByClassName('restaurantOverview')[0];
+    const justEatRestaurantOverview = document.getElementsByClassName('restaurantOverview')[0];
+    const container = document.createElement('div');
+    const image = document.createElement('img');
+
+    container.classList.add('o-card');
+    container.style.padding = '16px';
+
+    if (responseObject.SchemeType === 'FHRS') {
+      // England, Wales, NI
+      const ratingValue = parseInt(responseObject.RatingValue, 10);
 
       if (ratingValue >= 0 && ratingValue <= 5) {
-        let container = document.createElement('div');
-        container.classList.add('o-card');
-        container.style.padding = '16px';
-
-        let image = document.createElement('img');
         image.src = `${baseImgURL}${ratingValue}.jpg`;
-
-        container.appendChild(image);
-
-        justEatRestaurantOverview.parentNode.insertBefore(container, justEatRestaurantOverview.nextSibling);
+      } else {
+        console.log('edge case?', ratingValue);
       }
     } else if (responseObject.SchemeType === 'FHIS') {
-      // Scotland
-
+      if (responseObject.RatingValue === 'Pass') {
+        image.src = `${baseImgURL}scot_pass.jpg`
+      } else if (responseObject.RatingValue === 'Pass and Eat Safe') {
+        image.src = `${baseImgURL}scot_passandeatsafe.jpg`
+      } else if (responseObject.RatingValue === 'Improvement Required') {
+        image.src = `${baseImgURL}scot_improvementrequired.jpg`
+      } else {
+        console.log('scottish edge case?', responseObject.RatingValue);
+      }
     }
-    console.log(responseObject);
+
+    container.appendChild(image);
+    justEatRestaurantOverview.parentNode.insertBefore(container, justEatRestaurantOverview.nextSibling);
   });
 
 } else {
