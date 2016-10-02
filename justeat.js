@@ -12,10 +12,11 @@ if (window.fetch) {
 
   let address = encodeURIComponent(document.querySelector('p.address').innerText);
   const postcode = encodeURIComponent(document.querySelector('#postcode').innerText);
-  const name = encodeURIComponent(document.querySelector('h1.name').innerText);
+  const name = document.querySelector('h1.name').innerText;
+  const nameEncoded = encodeURIComponent(name);
 
   let fullAddressURL = baseURL + address;
-  let fullPostcodeURL = `${baseURL}${postcode}&name=${name}`;
+  let fullPostcodeURL = `${baseURL}${postcode}&name=${nameEncoded}`;
 
   function insertTakeoutRating(takeoutData) {
     const justEatRestaurantOverview = document.getElementsByClassName('restaurantOverview')[0];
@@ -87,6 +88,24 @@ if (window.fetch) {
       insertTakeoutRating(responseObject.establishments[0])
     } else {
       console.log('multiples!');
+      for (var i = 0; i < responseObject.establishments.length; i++) {
+        let establishment = responseObject.establishments[i];
+        establishment.similarity = window.similarity(establishment.BusinessName, name)
+      }
+
+      let establishments = responseObject.establishments;
+      establishments.sort((a, b) => {
+        if (a.similarity > b.similarity) {
+          return -1;
+        } else if (a.similarity < b.similarity) {
+          return 1;
+        } else return 0;
+      });
+
+      if (establishments[0].similarity === 1) {
+        insertTakeoutRating(establishments[0]);
+      }
+
     }
   });
 
