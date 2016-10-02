@@ -12,8 +12,10 @@ if (window.fetch) {
 
   let address = encodeURIComponent(document.querySelector('p.address').innerText);
   const postcode = encodeURIComponent(document.querySelector('#postcode').innerText);
+  const name = encodeURIComponent(document.querySelector('h1.name').innerText);
 
-  let fullURL = baseURL + address;
+  let fullAddressURL = baseURL + address;
+  let fullPostcodeURL = `${baseURL}${postcode}&name=${name}`;
 
   function insertTakeoutRating(takeoutData) {
     const justEatRestaurantOverview = document.getElementsByClassName('restaurantOverview')[0];
@@ -69,9 +71,17 @@ if (window.fetch) {
     justEatRestaurantOverview.parentNode.insertBefore(container, justEatRestaurantOverview.nextSibling);
   }
 
-  fetch(fullURL, requestSettings).then((response) => {
+  fetch(fullAddressURL, requestSettings).then((response) => {
     console.log(response);
-    return response.json();
+    if (response.status === 204) {
+      fetch(fullPostcodeURL, requestSettings).then((newResponse) => {
+        return newResponse.json();
+      }).then((newResponseObject) => {
+        insertTakeoutRating(newResponseObject);
+      });
+    } else {
+      return response.json();
+    }
   }).then((responseObject) => {
     insertTakeoutRating(responseObject)
   });
