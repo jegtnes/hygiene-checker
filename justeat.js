@@ -28,6 +28,8 @@ if (window.fetch) {
         image.src = `${baseImgURL}awaitinginspection.jpg`;
       } else if (takeoutData.RatingValue === 'AwaitingPublication') {
         image.src = `${baseImgURL}awaitingpublication.jpg`;
+      } else if (takeoutData.RatingValue === 'Exempt') {
+        image.src = `${baseImgURL}exempt.jpg`;
       } else {
         // England, Wales, NI
         const ratingValue = parseInt(takeoutData.RatingValue, 10);
