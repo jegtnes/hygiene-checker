@@ -83,7 +83,11 @@ if (window.fetch) {
       return response.json();
     }
   }).then((responseObject) => {
-    insertTakeoutRating(responseObject)
+    if (responseObject.establishments.length === 1) {
+      insertTakeoutRating(responseObject.establishments[0])
+    } else {
+      console.log('multiples!');
+    }
   });
 
 } else {
