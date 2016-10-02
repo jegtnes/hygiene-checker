@@ -7,7 +7,7 @@
 
   "content_scripts": [
     {
-      "matches": ["*://*.just-eat.co.uk/restaurants-*/menu"],
+      "matches": ["*://*.just-eat.co.uk/restaurants-*"],
       "js": ["justeat.js"]
     }
   ]
