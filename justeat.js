@@ -24,13 +24,19 @@ if (window.fetch) {
     container.style.padding = '16px';
 
     if (takeoutData.SchemeType === 'FHRS') {
-      // England, Wales, NI
-      const ratingValue = parseInt(takeoutData.RatingValue, 10);
-
-      if (ratingValue >= 0 && ratingValue <= 5) {
-        image.src = `${baseImgURL}${ratingValue}.jpg`;
+      if (takeoutData.RatingValue === 'AwaitingInspection') {
+        image.src = `${baseImgURL}awaitinginspection.jpg`;
+      } else if (takeoutData.RatingValue === 'AwaitingPublication') {
+        image.src = `${baseImgURL}awaitingpublication.jpg`;
       } else {
-        console.log('edge case?', ratingValue);
+        // England, Wales, NI
+        const ratingValue = parseInt(takeoutData.RatingValue, 10);
+
+        if (ratingValue >= 0 && ratingValue <= 5) {
+          image.src = `${baseImgURL}${ratingValue}.jpg`;
+        } else {
+          console.log('edge case?', ratingValue);
+        }
       }
     } else if (takeoutData.SchemeType === 'FHIS') {
       if (takeoutData.RatingValue === 'Pass') {
