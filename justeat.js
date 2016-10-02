@@ -88,27 +88,30 @@ if (window.fetch) {
       insertTakeoutRating(responseObject.establishments[0])
     } else {
       console.log('multiples!');
-      for (var i = 0; i < responseObject.establishments.length; i++) {
-        let establishment = responseObject.establishments[i];
-        establishment.similarity = window.similarity(establishment.BusinessName, name)
-      }
-
-      let establishments = responseObject.establishments;
-      establishments.sort((a, b) => {
-        if (a.similarity > b.similarity) {
-          return -1;
-        } else if (a.similarity < b.similarity) {
-          return 1;
-        } else return 0;
-      });
+      let establishments = addSimilarityAndSort(responseObject.establishments, name);
+      console.log(establishments);
 
       if (establishments[0].similarity === 1) {
         insertTakeoutRating(establishments[0]);
       }
-
     }
   });
 
 } else {
   console.log('stop trying to make fetch happen');
+}
+
+function addSimilarityAndSort(establishments, name) {
+  for (var i = 0; i < establishments.length; i++) {
+    let establishment = establishments[i];
+    establishment.similarity = window.similarity(establishment.BusinessName, name)
+  }
+
+  return establishments.sort((a, b) => {
+    if (a.similarity > b.similarity) {
+      return -1;
+    } else if (a.similarity < b.similarity) {
+      return 1;
+    } else return 0;
+  });
 }
