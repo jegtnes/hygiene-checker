@@ -41,14 +41,27 @@ if (window.fetch) {
         }
       }
     } else if (takeoutData.SchemeType === 'FHIS') {
-      if (takeoutData.RatingValue === 'Pass') {
-        image.src = `${baseImgURL}scot_pass.jpg`
-      } else if (takeoutData.RatingValue === 'Pass and Eat Safe') {
-        image.src = `${baseImgURL}scot_passandeatsafe.jpg`
-      } else if (takeoutData.RatingValue === 'Improvement Required') {
-        image.src = `${baseImgURL}scot_improvementrequired.jpg`
-      } else {
-        console.log('scottish edge case?', takeoutData.RatingValue);
+      switch (takeoutData.RatingValue) {
+        case 'Pass':
+          image.src = `${baseImgURL}scot_pass.jpg`;
+          break;
+        case 'Pass and Eat Safe':
+          image.src = `${baseImgURL}scot_passandeatsafe.jpg`;
+          break;
+        case 'Improvement Required':
+          image.src = `${baseImgURL}scot_improvementrequired.jpg`;
+          break;
+        case 'Awaiting Inspection':
+          image.src = `${baseImgURL}scot_awaitinginspection.jpg`;
+          break;
+        case 'Awaiting Publication':
+          image.src = `${baseImgURL}scot_awaitingpublication.jpg`;
+          break;
+        case 'Exempt':
+          image.src = `${baseImgURL}scot_exempt.jpg`;
+          break;
+        default:
+          console.log('scottish edge case?', takeoutData.RatingValue);
       }
     }
 
