@@ -73,6 +73,73 @@ if (window.fetch) {
     justEatRestaurantOverview.parentNode.insertBefore(container, justEatRestaurantOverview.nextSibling);
   }
 
+  function insertSelector(takeoutData) {
+    const select = document.createElement('select');
+    const justEatRestaurantOverview = document.getElementsByClassName('restaurantOverview')[0];
+    const infoHeadline = document.createElement('h2');
+    const infoParagraph = document.createElement('p');
+    const ratingImage = document.createElement('img');
+    const container = document.createElement('div');
+
+
+    ratingImage.style.display = 'none';
+    infoHeadline.style.fontSize = '20px';
+    infoParagraph.style.margin = '8px 0';
+    infoParagraph.style.fontSize = '14px';
+    select.style.margin = '8px 0 16px 0';
+    container.classList.add('o-card');
+    container.style.padding = '16px';
+
+    infoHeadline.innerText = 'Hygiene Checker:'
+    infoParagraph.innerText = `Because of inconsistent data, Hygiene Checker can't automatically determine which restaurant this establishment is. Please select one of the following premises at this postcode to view their rating:`;
+
+    const firstChild = document.createElement('option');
+    firstChild.innerText = 'Please select…';
+    firstChild.dataset.isFirstChild = 'true';
+    select.appendChild(firstChild);
+
+    for (var i = 0; i < takeoutData.length; i++) {
+      let option = document.createElement('option');
+      option.innerText = takeoutData[i].BusinessName;
+      option.dataset.BusinessName = takeoutData[i].BusinessName;;
+      option.dataset.RatingValue = takeoutData[i].RatingValue;
+      select.appendChild(option);
+    }
+
+    select.addEventListener('click', function(e) {
+      if (e.target.nodeName === 'OPTION') {
+        if (e.target.dataset.isFirstChild) {
+          ratingImage.style.display = 'none';
+        } else {
+          ratingImage.style.display = 'block';
+
+          if (e.target.dataset.RatingValue === 'AwaitingInspection') {
+            ratingImage.src = `${baseImgURL}awaitinginspection.jpg`;
+          } else if (e.target.dataset.RatingValue === 'AwaitingPublication') {
+            ratingImage.src = `${baseImgURL}awaitingpublication.jpg`;
+          } else if (e.target.dataset.RatingValue === 'Exempt') {
+            ratingImage.src = `${baseImgURL}exempt.jpg`;
+          } else {
+            // England, Wales, NI
+            const ratingValue = parseInt(e.target.dataset.RatingValue, 10);
+
+            if (ratingValue >= 0 && ratingValue <= 5) {
+              ratingImage.src = `${baseImgURL}${ratingValue}.jpg`;
+            } else {
+              console.log('edge case?', ratingValue);
+            }
+          }
+        }
+      }
+    });
+
+    container.appendChild(infoHeadline);
+    container.appendChild(infoParagraph);
+    container.appendChild(select);
+    container.appendChild(ratingImage);
+    justEatRestaurantOverview.parentNode.insertBefore(container, justEatRestaurantOverview.nextSibling);
+  }
+
   fetch(fullAddressURL, requestSettings).then((addressResponse) => {
     console.log(addressResponse);
     if (addressResponse.status === 204) {
@@ -99,6 +166,7 @@ if (window.fetch) {
                 insertTakeoutRating(establishments[0]);
               } else {
                 console.log('failed');
+                insertSelector(establishments);
                 console.log(establishments);
               }
             } else if (postcodeSearchObject.establishments.length === 1) {
