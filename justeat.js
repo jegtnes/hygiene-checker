@@ -72,29 +72,29 @@ if (window.fetch) {
     justEatRestaurantOverview.parentNode.insertBefore(container, justEatRestaurantOverview.nextSibling);
   }
 
-  fetch(fullAddressURL, requestSettings).then((response) => {
-    console.log(response);
-    if (response.status === 204) {
-      fetch(fullPostcodeURL, requestSettings).then((newResponse) => {
-        return newResponse.json();
-      }).then((newResponseObject) => {
-        if (newResponseObject.establishments.length > 1) {
+  fetch(fullAddressURL, requestSettings).then((addressResponse) => {
+    console.log(addressResponse);
+    if (addressResponse.status === 204) {
+      fetch(fullPostcodeURL, requestSettings).then((postcodeNameSearch) => {
+        return postcodeNameSearch.json();
+      }).then((postcodeNameSearchObject) => {
+        if (postcodeNameSearchObject.establishments.length > 1) {
           console.log('postcode+name results longer than 1');
-        } else if (newResponseObject.establishments.length === 1){
-          insertTakeoutRating(newResponseObject.establishments[0]);
+        } else if (postcodeNameSearchObject.establishments.length === 1){
+          insertTakeoutRating(postcodeNameSearchObject.establishments[0]);
         } else {
           console.log('postcode+name results = 0');
         }
       });
     } else {
-      return response.json();
+      return addressResponse.json();
     }
-  }).then((responseObject) => {
-    if (responseObject.establishments.length === 1) {
-      insertTakeoutRating(responseObject.establishments[0])
+  }).then((addressResponseObject) => {
+    if (addressResponseObject.establishments.length === 1) {
+      insertTakeoutRating(addressResponseObject.establishments[0])
     } else {
       console.log('multiples!');
-      let establishments = addSimilarityAndSort(responseObject.establishments, name);
+      let establishments = addSimilarityAndSort(addressResponseObject.establishments, name);
       console.log(establishments);
 
       if (
