@@ -78,7 +78,13 @@ if (window.fetch) {
       fetch(fullPostcodeURL, requestSettings).then((newResponse) => {
         return newResponse.json();
       }).then((newResponseObject) => {
-        insertTakeoutRating(newResponseObject);
+        if (newResponseObject.establishments.length > 1) {
+          console.log('postcode+name results longer than 1');
+        } else if (newResponseObject.establishments.length === 1){
+          insertTakeoutRating(newResponseObject.establishments[0]);
+        } else {
+          console.log('postcode+name results = 0');
+        }
       });
     } else {
       return response.json();
