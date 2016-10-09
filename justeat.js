@@ -74,6 +74,7 @@ if (window.fetch) {
   }
 
   function insertSelector(takeoutData) {
+    console.log('inserting selector');
     const select = document.createElement('select');
     const justEatRestaurantOverview = document.getElementsByClassName('restaurantOverview')[0];
     const infoHeadline = document.createElement('h2');
@@ -185,6 +186,7 @@ if (window.fetch) {
       }).then((postcodeNameSearchObject) => {
         if (postcodeNameSearchObject.establishments.length > 1) {
           console.log('postcode+name results longer than 1');
+          insertSelector(postcodeNameSearchObject.establishments);
         } else if (postcodeNameSearchObject.establishments.length === 1){
           insertTakeoutRating(postcodeNameSearchObject.establishments[0]);
         } else {
@@ -207,6 +209,8 @@ if (window.fetch) {
         establishments[0].similarity >= (establishments[1].similarity * 2)
       ) {
         insertTakeoutRating(establishments[0]);
+      } else {
+        insertSelector(establishments);
       }
     }
   });
