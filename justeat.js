@@ -16,7 +16,8 @@ if (window.fetch) {
   const nameEncoded = encodeURIComponent(name);
 
   let fullAddressURL = baseURL + address;
-  let fullPostcodeURL = `${baseURL}${postcode}&name=${nameEncoded}`;
+  let postcodeURL = `${baseURL}${postcode}`;
+  let postcodeNameURL = `${postcodeURL}&name=${nameEncoded}`;
 
   function insertTakeoutRating(takeoutData) {
     const justEatRestaurantOverview = document.getElementsByClassName('restaurantOverview')[0];
@@ -75,15 +76,51 @@ if (window.fetch) {
   fetch(fullAddressURL, requestSettings).then((addressResponse) => {
     console.log(addressResponse);
     if (addressResponse.status === 204) {
-      fetch(fullPostcodeURL, requestSettings).then((postcodeNameSearch) => {
-        return postcodeNameSearch.json();
+      fetch(postcodeNameURL, requestSettings).then((postcodeNameSearch) => {
+        console.log('what');
+        if (postcodeNameSearch.status === 204) {
+          fetch(postcodeURL, requestSettings).then((postcodeSearch) => {
+            console.log('the fuck');
+            console.log(postcodeSearch);
+            if (postcodeSearch.status === 200) {
+              return postcodeSearch.json();
+            } else {
+              console.log('postcode search failed');
+              console.log(postcodeSearch);
+            }
+          }).then((postcodeSearchObject) => {
+            if (postcodeSearchObject.establishments.length > 1) {
+              console.log('postcode results longer than 1');
+              let establishments = addSimilarityAndSort(postcodeSearchObject.establishments, name);
+              if (
+                establishments[0].similarity >= 0.9 ||
+                establishments[0].similarity >= (establishments[1].similarity * 2)
+              ) {
+                insertTakeoutRating(establishments[0]);
+              } else {
+                console.log('failed');
+                console.log(establishments);
+              }
+            } else if (postcodeSearchObject.establishments.length === 1) {
+              console.log('postcode result exactly 1');
+              insertTakeoutRating(postcodeSearchObject.establishments[0]);
+            } else if (postcodeSearchObject.establishments.length === 0) {
+              console.log('postcode result empty');
+            } else {
+              console.log('postcode result fucked m8');
+              console.log(postcodeSearchObject);
+            }
+          });
+        } else {
+          return postcodeNameSearch.json();
+        }
       }).then((postcodeNameSearchObject) => {
         if (postcodeNameSearchObject.establishments.length > 1) {
           console.log('postcode+name results longer than 1');
         } else if (postcodeNameSearchObject.establishments.length === 1){
           insertTakeoutRating(postcodeNameSearchObject.establishments[0]);
         } else {
-          console.log('postcode+name results = 0');
+          console.log('¯\_(ツ)_/¯');
         }
       });
     } else {
