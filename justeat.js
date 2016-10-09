@@ -91,7 +91,10 @@ if (window.fetch) {
       let establishments = addSimilarityAndSort(responseObject.establishments, name);
       console.log(establishments);
 
-      if (establishments[0].similarity === 1) {
+      if (
+        establishments[0].similarity >= 0.9 ||
+        establishments[0].similarity >= (establishments[1].similarity * 2)
+      ) {
         insertTakeoutRating(establishments[0]);
       }
     }
